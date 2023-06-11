@@ -32,7 +32,6 @@ const getUserChats = async (req: Request, res: Response) => {
 const getSpecificChat = async (req: Request, res: Response) => {
   try {
     const { ID } = res.locals.currentUser;
-    console.log(req);
     const { linkedUserId } = req.params
 
     let user = await getSpecificChatService({ linkedUserId: +linkedUserId, userId: ID })

@@ -1,4 +1,4 @@
-import { Model } from "sequelize";
+import { Model, Op } from "sequelize";
 import { User } from "../models/user.model";
 import { comparePassword, plainToHash } from "../utils";
 import { loginUserType, newUserType } from "./types";
@@ -45,5 +45,14 @@ const loginUserService = async (input: loginUserType) => {
   }
 };
 
+const getAllUsersService = async (email: string) => {
+  try {
+    const users: any = await User.findAll({ where: { email: { [Op.ne]: email } } });
+    return users;
+  } catch (error: any) {
+    throw new Error(error);
+  }
+};
 
-export { createUserService, loginUserService, checkUserExistById };
+
+export { createUserService, loginUserService, checkUserExistById, getAllUsersService };

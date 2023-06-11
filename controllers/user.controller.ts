@@ -1,5 +1,5 @@
 import { validationResult } from "express-validator";
-import { createUserService, loginUserService } from "../services/user.service";
+import { createUserService, getAllUsersService, loginUserService } from "../services/user.service";
 import { Request, Response } from 'express'
 import { generateToken } from "../utils";
 
@@ -33,4 +33,15 @@ const loginUser = async (req: Request, res: Response) => {
   }
 }
 
-export { createUser, loginUser }
+const getAllUsers = async (_req: Request, res: Response) => {
+  try {
+    const { email } = res.locals.currentUser;
+    let users = await getAllUsersService(email)
+
+    res.status(200).json({ success: true, data: users });
+  } catch (error: any) {
+    res.status(500).json({ error: error.message });
+  }
+}
+
+export { createUser, loginUser, getAllUsers }
