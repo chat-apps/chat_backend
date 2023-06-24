@@ -1,6 +1,6 @@
 import { validationResult } from "express-validator";
 import { Request, Response } from 'express'
-import { createMessageService, getChatMessagesService } from "../services/message.service";
+import { createMessageService, getRoomMessagesService } from "../services/message.service";
 
 const createMessage = async (req: Request, res: Response) => {
   try {
@@ -9,7 +9,7 @@ const createMessage = async (req: Request, res: Response) => {
 
     const { body } = req
     const { currentUser } = res.locals;
-    body.userId = currentUser.ID
+    body.userID = currentUser.ID
     let message = await createMessageService(body)
 
     res.status(200).json({ success: true, data: message });
@@ -18,12 +18,12 @@ const createMessage = async (req: Request, res: Response) => {
   }
 }
 
-const getChatMessages = async (req: Request, res: Response) => {
+const getRoomMessages = async (req: Request, res: Response) => {
   try {
-    const { chatId } = req.params;
-    let chats = await getChatMessagesService(+chatId)
+    const { roomId } = req.params;
+    let rooms = await getRoomMessagesService(+roomId)
 
-    res.status(200).json({ success: true, data: chats });
+    res.status(200).json({ success: true, data: rooms });
   } catch (error: any) {
     res.status(500).json({ error: error.message });
   }
@@ -33,9 +33,9 @@ const getChatMessages = async (req: Request, res: Response) => {
   try {
     const { ID } = res.locals.currentUser;
     console.log(req);
-    const { linkedUserId } = req.params
+    const { linkedUser } = req.params
 
-    let user = await getSpecificChatService({ linkedUserId: +linkedUserId, userId: ID })
+    let user = await getSpecificChatService({ linkedUser: +linkedUser, userId: ID })
 
     res.status(200).json({ success: true, data: user });
   } catch (error: any) {
@@ -43,4 +43,4 @@ const getChatMessages = async (req: Request, res: Response) => {
   }
 } */
 
-export { createMessage, getChatMessages }
+export { createMessage, getRoomMessages }

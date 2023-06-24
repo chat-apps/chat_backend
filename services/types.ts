@@ -9,14 +9,14 @@ export interface loginUserType {
 }
 
 export interface newChatTypes {
-  linkedUserId: number;
+  linkedUser: number;
   userId: number;
 }
 
 export interface newMessageTypes {
   text: string;
-  chatId: number;
-  userId: number;
+  roomID: number;
+  userID: number;
 }
 
 export interface getUserChatTypes {
@@ -24,6 +24,6 @@ export interface getUserChatTypes {
 }
 
 export interface getChatByIdType {
-  linkedUserId: number;
+  linkedUser: number;
   userId: number;
 }

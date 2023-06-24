@@ -1,11 +1,13 @@
 import { User } from "./user.model";
-import { Chat } from "./chat.model";
+import { Room } from "./room.model";
 import { Message } from "./message.model";
 
-User.hasMany(Message, { foreignKey: 'userId', as: 'messages' });
-User.hasMany(Chat, { foreignKey: 'userId', as: 'chats' });
-Chat.hasMany(Message, { foreignKey: 'chatId', as: 'messages' });
+User.hasMany(Message);
+User.hasMany(Room);
 
-Chat.belongsTo(User, { foreignKey: 'userId', as: 'user' });
-Message.belongsTo(User, { foreignKey: 'userId', as: 'user' });
-Message.belongsTo(Chat, { foreignKey: 'chatId', as: 'chat' });
+Message.belongsTo(User);
+Message.belongsTo(Room);
+
+Room.hasMany(Message);
+Room.belongsTo(User);
+Room.belongsTo(User, { foreignKey: 'linkedUserId', as: 'linkedUser' });

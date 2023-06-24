@@ -3,8 +3,9 @@ import { Message } from "../models/message.model";
 
 const createMessageService = async (input: newMessageTypes) => {
   try {
-    const { chatId, userId, text } = input
-    const newMessage = await Message.create({ userId, chatId, text })
+    const { roomID, userID, text } = input;
+
+    const newMessage = await Message.create({ userID, roomID, text })
 
     return newMessage
   } catch (error: any) {
@@ -12,9 +13,9 @@ const createMessageService = async (input: newMessageTypes) => {
   }
 }
 
-const getChatMessagesService = async (chatId: number) => {
+const getRoomMessagesService = async (roomID: number) => {
   try {
-    const messages = await Message.findAll({ where: { chatId } })
+    const messages = await Message.findAll({ where: { roomID } })
 
     return messages;
   } catch (error: any) {
@@ -22,4 +23,4 @@ const getChatMessagesService = async (chatId: number) => {
   }
 };
 
-export { createMessageService, getChatMessagesService };
+export { createMessageService, getRoomMessagesService };
