@@ -9,5 +9,5 @@ Message.belongsTo(User);
 Message.belongsTo(Room);
 
 Room.hasMany(Message);
-Room.belongsTo(User);
+Room.belongsTo(User, { foreignKey: 'userID', as: 'user' });
 Room.belongsTo(User, { foreignKey: 'linkedUserId', as: 'linkedUser' });

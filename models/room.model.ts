@@ -7,6 +7,10 @@ const Room = sequelize.define('rooms', {
     primaryKey: true,
     autoIncrement: true,
   },
+  status: {
+    type: DataTypes.BOOLEAN,
+    defaultValue: false,
+  },
 }, {
   timestamps: true,
   indexes: [{

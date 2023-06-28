@@ -47,7 +47,13 @@ const loginUserService = async (input: loginUserType) => {
 
 const getAllUsersService = async (email: string) => {
   try {
-    const users: any = await User.findAll({ where: { email: { [Op.ne]: email } } });
+    const users: any[] = await User.findAll({ where: { email: { [Op.ne]: email } } });
+
+    users.forEach((user) => {
+      delete user.dataValues.password
+      return user
+    })
+
     return users;
   } catch (error: any) {
     throw new Error(error);
