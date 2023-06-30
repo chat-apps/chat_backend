@@ -2,6 +2,7 @@ import { Model, Op } from "sequelize";
 import { User } from "../models/user.model";
 import { comparePassword, plainToHash } from "../utils";
 import { loginUserType, newUserType } from "./types";
+import { checkAllUSersAlreadyHaveRoomWithOtherUser, getRoomByByBothUserIDsService } from "./room.service";
 
 const checkUserExist = async (email: string) => {
   const user = await User.findOne({ where: { email } });
@@ -45,16 +46,18 @@ const loginUserService = async (input: loginUserType) => {
   }
 };
 
-const getAllUsersService = async (email: string) => {
+const getAllUsersService = async (userID: number) => {
   try {
-    const users: any[] = await User.findAll({ where: { email: { [Op.ne]: email } } });
+    const users: any[] = await User.findAll({ where: { ID: { [Op.ne]: userID } } });
 
     users.forEach((user) => {
       delete user.dataValues.password
-      return user
     })
 
-    return users;
+    const removedAlreadyLinkedUsers = checkAllUSersAlreadyHaveRoomWithOtherUser(users, userID)
+
+
+    return removedAlreadyLinkedUsers;
   } catch (error: any) {
     throw new Error(error);
   }

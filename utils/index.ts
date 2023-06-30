@@ -22,7 +22,7 @@ const comparePassword = async (plainPassword: string, hashedPassword: string): P
 const generateToken = (payload: any) => {
   const secretKey = process.env.JWT_SECRET_KEY || "";
   const options = {
-    expiresIn: '1h'
+    expiresIn: '10h'
   };
   payload = JSON.parse(JSON.stringify(payload))
 

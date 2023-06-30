@@ -9,21 +9,22 @@ export interface loginUserType {
 }
 
 export interface newChatTypes {
-  linkedUser: number;
-  userId: number;
+  linkedUserID: number;
+  userID: number;
 }
 
 export interface newMessageTypes {
   text: string;
   roomID: number;
   userID: number;
+  secondRoomID: number;
 }
 
 export interface getUserChatTypes {
-  userId: number;
+  userID: number;
 }
 
 export interface getChatByIdType {
   linkedUser: number;
-  userId: number;
+  userID: number;
 }

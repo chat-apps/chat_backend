@@ -10,6 +10,15 @@ const Message = sequelize.define('message', {
   text: {
     type: DataTypes.STRING
   },
+  roomID: {
+    type: DataTypes.INTEGER
+  },
+  userID: {
+    type: DataTypes.INTEGER
+  },
+  secondRoomID: {
+    type: DataTypes.INTEGER
+  }
 }, {
   timestamps: true,
 })

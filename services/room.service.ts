@@ -4,15 +4,15 @@ import { checkUserExistById } from "./user.service";
 import { User } from "../models/user.model";
 import { Op } from "sequelize";
 
-const createChatService = async (input: newChatTypes) => {
+const createChatService = async (input: newChatTypes, status?: boolean) => {
   try {
-    const { linkedUser, userId } = input
-    if (linkedUser === userId) throw new Error('Something went wrong')
+    const { linkedUserID, userID } = input
+    if (linkedUserID === userID) throw new Error('Something went wrong')
 
-    const linkedUserExist = await checkUserExistById(linkedUser)
+    const linkedUserExist = await checkUserExistById(linkedUserID)
     if (!linkedUserExist) throw new Error('User not exist')
 
-    const newChat = await Room.create({ userID: userId, linkedUserId: linkedUser })
+    const newChat = await Room.create({ userID, linkedUserID, status })
 
     return newChat
   } catch (error: any) {
@@ -20,7 +20,7 @@ const createChatService = async (input: newChatTypes) => {
   }
 }
 
-const getUserChatsService = async (userId: number) => {
+const getUserRoomsService = async (userId: number) => {
   try {
     return Room.findAll({
       where: {
@@ -43,16 +43,34 @@ const getUserChatsService = async (userId: number) => {
 
 const getRoomByIdService = async (roomId: number) => {
   try {
-    const rooms = await Room.findOne({
+    const room: any = await Room.findOne({
       where: { ID: roomId },
       include: [{ model: User, as: 'linkedUser' }],
     });
 
-    return rooms;
+    const usersIdz = [room.linkedUserID, room.userID];
+
+    const secondRoom: any = await Room.findOne({
+      where: {
+        ID: { [Op.ne]: roomId },
+        linkedUserID: {
+          [Op.in]: usersIdz,
+        },
+        userID: {
+          [Op.in]: usersIdz,
+        },
+      },
+    });
+
+    const roomCopy: any = { ...room.toJSON() };
+    roomCopy.secondRoomID = secondRoom.ID;
+
+    return roomCopy;
   } catch (error: any) {
     throw new Error(error);
   }
 };
+
 
 const getRoomsRequestsService = async (userId: number) => {
   try {
@@ -61,7 +79,7 @@ const getRoomsRequestsService = async (userId: number) => {
         linkedUserId: userId,
         status: false
       },
-      include: { model: User, as: 'user' },
+      include: [{ model: User, as: 'user' }],
     });
     return rooms;
   } catch (error: any) {
@@ -76,7 +94,7 @@ const getSentRequestsService = async (userId: number) => {
         userID: userId,
         status: false
       },
-      include: { model: User, as: 'linkedUser' },
+      include: [{ model: User, as: 'linkedUser' }],
     });
     return rooms;
   } catch (error: any) {
@@ -84,12 +102,12 @@ const getSentRequestsService = async (userId: number) => {
   }
 };
 
-const acceptRoomRequestService = async (userId: number, roomId: number) => {
+const acceptRoomRequestService = async (userID: number, roomID: number) => {
   try {
     const room: any = await Room.findOne({
       where: {
-        linkedUserId: userId,
-        id: roomId,
+        linkedUserID: userID,
+        ID: roomID,
         status: false
       },
     });
@@ -99,18 +117,23 @@ const acceptRoomRequestService = async (userId: number, roomId: number) => {
     room.status = true;
     await room.save();
 
+    await createChatService({
+      linkedUserID: room.userID,
+      userID,
+    }, true)
+
     return room.id;
   } catch (error: any) {
     throw new Error(error)
   }
 }
 
-const getRoomByLinkedUserIdService = async (linkedUserId: number, currentUserId: number) => {
+const getRoomByByBothUserIDsService = async (linkedUserId: number, currentUserId: number) => {
   try {
     let ids = [linkedUserId, currentUserId]
-    const rooms = await Room.findOne({
+    const rooms = await Room.findAll({
       where: {
-        linkedUserId: {
+        linkedUserID: {
           [Op.in]: ids,
         },
         userID: {
@@ -125,4 +148,25 @@ const getRoomByLinkedUserIdService = async (linkedUserId: number, currentUserId:
   }
 };
 
-export { createChatService, getUserChatsService, getSentRequestsService, getRoomByIdService, getRoomsRequestsService, acceptRoomRequestService };
+const checkAllUSersAlreadyHaveRoomWithOtherUser = async (users: typeof User[], userID: number) => {
+  try {
+    const rooms = await Room.findAll();
+
+    const removedAlreadyLinkedUsers = users.filter((user: any) => {
+      const alreadyLinked = rooms.some((room: any) => {
+        if (room.userID === userID || room.linkedUserID === userID) {
+          return room.linkedUserID === user.ID || room.userID === user.ID
+        }
+      })
+      if (!alreadyLinked) {
+        return user
+      }
+    })
+
+    return removedAlreadyLinkedUsers;
+  } catch (error: any) {
+    throw new Error(error);
+  }
+};
+
+export { createChatService, getUserRoomsService, getSentRequestsService, getRoomByIdService, getRoomsRequestsService, checkAllUSersAlreadyHaveRoomWithOtherUser, acceptRoomRequestService, getRoomByByBothUserIDsService };

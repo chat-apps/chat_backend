@@ -1,6 +1,6 @@
 import { validationResult } from "express-validator";
 import { Request, Response } from 'express'
-import { createChatService, getRoomsRequestsService, getRoomByIdService, getSentRequestsService, getUserChatsService, acceptRoomRequestService } from "../services/room.service";
+import { createChatService, getRoomsRequestsService, getRoomByIdService, getSentRequestsService, getUserRoomsService, acceptRoomRequestService } from "../services/room.service";
 
 const createRoom = async (req: Request, res: Response) => {
   try {
@@ -9,7 +9,7 @@ const createRoom = async (req: Request, res: Response) => {
 
     const { body } = req
     const { currentUser } = res.locals;
-    body.userId = currentUser.ID
+    body.userID = currentUser.ID
     let room = await createChatService(body)
 
     res.status(200).json({ success: true, data: room });
@@ -21,7 +21,7 @@ const createRoom = async (req: Request, res: Response) => {
 const getUserChats = async (req: Request, res: Response) => {
   try {
     const { ID } = res.locals.currentUser;
-    let rooms = await getUserChatsService(ID)
+    let rooms = await getUserRoomsService(ID)
 
     res.status(200).json({ success: true, data: rooms });
   } catch (error: any) {

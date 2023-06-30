@@ -1,7 +1,7 @@
 import { Router } from 'express'
 import { login_validator, register_validator } from '../validator/user.validator';
 import { createUser, getAllUsers, loginUser } from '../controllers/user.controller';
-import { authenticate } from '../middleware/jst.middleware';
+import { authenticate } from '../middleware/jwt.middleware';
 
 const router = Router()
 

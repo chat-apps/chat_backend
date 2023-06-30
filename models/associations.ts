@@ -5,9 +5,6 @@ import { Message } from "./message.model";
 User.hasMany(Message);
 User.hasMany(Room);
 
-Message.belongsTo(User);
-Message.belongsTo(Room);
-
 Room.hasMany(Message);
 Room.belongsTo(User, { foreignKey: 'userID', as: 'user' });
-Room.belongsTo(User, { foreignKey: 'linkedUserId', as: 'linkedUser' });
+Room.belongsTo(User, { foreignKey: 'linkedUserID', as: 'linkedUser' });

@@ -35,8 +35,8 @@ const loginUser = async (req: Request, res: Response) => {
 
 const getAllUsers = async (_req: Request, res: Response) => {
   try {
-    const { email } = res.locals.currentUser;
-    let users = await getAllUsersService(email)
+    const { ID } = res.locals.currentUser;
+    let users = await getAllUsersService(+ID)
 
     res.status(200).json({ success: true, data: users });
   } catch (error: any) {

@@ -1,6 +1,6 @@
 import { Router } from 'express'
 import { createRoom, getRoomsRequests, getSentRequests, getRoomById, getUserChats, acceptRoomRequest } from '../controllers/room.controller';
-import { authenticate } from '../middleware/jst.middleware';
+import { authenticate } from '../middleware/jwt.middleware';
 import { new_chat_validator } from '../validator/room.validator';
 
 const router = Router()
